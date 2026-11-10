@@ -39,23 +39,42 @@
   };
 
   class AudioPlayer {
-    constructor() { this.context = null; this.cache = new Map(); this.token = 0; this.source = null; this.finish = null; }
+    constructor() { this.context = null; this.cache = new Map(); this.byteCache = new Map(); this.token = 0; this.source = null; this.finish = null; }
     stop() {
       this.token++;
       if (this.finish) { this.finish(false); this.finish = null; }
       if (this.source) { try { this.source.stop(); } catch (_) {} this.source = null; }
     }
+    async readBytes(path) {
+      const url=globalThis.ASSET_MAP?.[path] || path;
+      if(this.byteCache.has(url))return this.byteCache.get(url);
+      const request=fetch(url).then(response=>{
+        if(!response.ok)throw new Error('Audio HTTP '+response.status);
+        return response.arrayBuffer();
+      });
+      this.byteCache.set(url,request);
+      while(this.byteCache.size>3)this.byteCache.delete(this.byteCache.keys().next().value);
+      try{return await request;}catch(error){this.byteCache.delete(url);throw error;}
+    }
     async getBuffer(key) {
-      if (this.cache.has(key)) return this.cache.get(key);
-      const entry = AUDIO_MANIFEST.clips[key];
-      if (!entry) throw new Error('Missing audio: ' + key);
-      const url = globalThis.ASSET_MAP?.[entry.file] || entry.file;
-      const request = fetch(url).then(r => {
-        if (!r.ok) throw new Error('Audio HTTP ' + r.status);
-        return r.arrayBuffer();
-      }).then(b => this.context.decodeAudioData(b));
-      this.cache.set(key, request);
-      try { return await request; } catch (e) { this.cache.delete(key); throw e; }
+      const cacheKey='clip:'+key;
+      if(this.cache.has(cacheKey))return this.cache.get(cacheKey);
+      const entry=globalThis.AUDIO_OVERRIDES?.clips[key] || AUDIO_MANIFEST.clips[key];
+      if(!entry)throw new Error('Missing audio: '+key);
+      const request=(async()=>{
+        const bytes=await this.readBytes(entry.pack || entry.file);
+        let selected;
+        if(entry.pack){
+          if(!Number.isSafeInteger(entry.offset)||!Number.isSafeInteger(entry.length)||entry.offset<0||entry.length<=0||entry.offset+entry.length>bytes.byteLength)throw new Error('Invalid audio range: '+key);
+          selected=bytes.slice(entry.offset,entry.offset+entry.length);
+        }else selected=bytes.slice(0);
+        return this.context.decodeAudioData(selected);
+      })();
+      this.remember(cacheKey,request);
+      try{return await request;}catch(error){this.cache.delete(cacheKey);throw error;}
+    }
+    async getSpeechBuffer(key,fallback) {
+      return globalThis.AUDIO_OVERRIDES?.clips[key] ? this.getBuffer(key) : this.getStaticBuffer(fallback);
     }
     remember(key,value){
       while(this.cache.size>=8)this.cache.delete(this.cache.keys().next().value);
@@ -79,7 +98,7 @@
       }
       await this.context.resume();
       const isClipList = Array.isArray(input);
-      const buffers = isClipList ? await Promise.all(input.map(k => this.getBuffer(k))) : await Promise.all([this.getStaticBuffer('assets/audio/orders/'+input.id+'.mp3'),this.getStaticBuffer('assets/audio/totals/'+input.total+'.mp3')]);
+      const buffers = isClipList ? await Promise.all(input.map(k => this.getBuffer(k))) : await Promise.all([this.getSpeechBuffer('orders/'+input.id,'assets/audio/orders/'+input.id+'.mp3'),this.getSpeechBuffer('totals/'+input.total,'assets/audio/totals/'+input.total+'.mp3')]);
       if (token !== this.token) return false;
       const gaps = isClipList ? input.map((key, index) => index === input.length-1 ? 0 : .1) : [.12,0];
       const totalLength = buffers.reduce((n,b,i) => n + b.length + Math.round(gaps[i]*this.context.sampleRate),0);
@@ -348,17 +367,31 @@
     $('#loading-retry').hidden=true;
     $('#loading-progress').value=0;$('#loading-percent').textContent='0%';
     $('#loading-status').textContent='Открываем магазин…';
-    const resources=[['assets/aisles.png','Расставляем товары…'],['assets/shop.png','Открываем кассу…'],['assets/groceries.png','Наполняем полки…'],['assets/reward-bag-v2.png','Готовим пакеты…'],['assets/audio/thanks.mp3','Готовим озвучку…']];
+    const resources=[['assets/aisles.png','Расставляем товары…'],['assets/shop.png','Открываем кассу…'],['assets/groceries.png','Наполняем полки…'],['assets/reward-bag-v2.png','Готовим пакеты…'],['assets/audio/khulan-v1/manifest.json','Готовим озвучку…']];
     let complete=0;
     const tasks=resources.map(async([src,label])=>{
       const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);
       try {
         const response=await fetch(src,{signal:controller.signal});
         if(!response.ok)throw new Error('Asset HTTP '+response.status);
-        const blob=await response.blob();
-        if(src.endsWith('.png')){
-          const image=new Image(),url=URL.createObjectURL(blob);
-          try {image.src=url;await image.decode();}finally{URL.revokeObjectURL(url);}
+        if(src.endsWith('/manifest.json')){
+          const manifest=await response.json();
+          if(manifest.version!=='khulan-v1'||manifest.voice!=='chimege:khulan'||Object.keys(manifest.clips||{}).length!==481)throw new Error('Invalid audio manifest');
+          const thanks=manifest.clips.thanks;
+          if(!thanks?.pack)throw new Error('Missing thank-you audio');
+          const url=globalThis.ASSET_MAP?.[thanks.pack] || thanks.pack;
+          const packResponse=await fetch(url,{signal:controller.signal});
+          if(!packResponse.ok)throw new Error('Audio HTTP '+packResponse.status);
+          const bytes=await packResponse.arrayBuffer();
+          if(!Number.isSafeInteger(thanks.offset)||!Number.isSafeInteger(thanks.length)||thanks.offset<0||thanks.length<=0||thanks.offset+thanks.length>bytes.byteLength)throw new Error('Invalid thank-you audio');
+          audio.byteCache.set(url,Promise.resolve(bytes));
+          globalThis.AUDIO_OVERRIDES=manifest;
+        }else{
+          const blob=await response.blob();
+          if(src.endsWith('.png')){
+            const image=new Image(),url=URL.createObjectURL(blob);
+            try {image.src=url;await image.decode();}finally{URL.revokeObjectURL(url);}
+          }
         }
       } finally {
         clearTimeout(timeout);

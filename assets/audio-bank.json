@@ -1,6 +1,6 @@
 {
   "mode": "complete-sentences",
-  "voice": "mn-MN-YesuiNeural",
+  "voice": "mixed-static-bank",
   "rate": "-15%",
   "order_ids": [
     "foreign-001",
@@ -607,5 +607,16 @@
   "maximum_total": 90000,
   "step": 500,
   "orders": 600,
-  "totals": 180
+  "totals": 180,
+  "legacy_voice": "mn-MN-YesuiNeural",
+  "override_voice": "chimege:khulan",
+  "override_manifest": "assets/audio/khulan-v1/manifest.json",
+  "override_scope": {
+    "order_levels": [
+      1,
+      2
+    ],
+    "all_totals": true,
+    "thanks": true
+  }
 }

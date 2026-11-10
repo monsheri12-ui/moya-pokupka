@@ -34,6 +34,10 @@
     if (!thousands) return numberWords(remainder) + ' төгрөг';
     return numberWords(thousands) + (remainder ? ' мянга ' + numberWords(remainder) : ' мянган') + ' төгрөг';
   }
+  function amountSentence(n) {
+    const words = amountWords(n);
+    return n < 52000 ? 'Нийт ' + words + '.' : words[0].toUpperCase() + words.slice(1) + '.';
+  }
   function amountKeys(n) {
     const thousands = Math.floor(n / 1000), remainder = n % 1000;
     if (!thousands) return ['remainder/' + remainder];
@@ -203,8 +207,8 @@
       return event.items.map(i => {
         const product = this.products.get(i.product_id);
         return ONES[i.quantity] + ' ' + product.spoken_unit;
-      }).join(', ') + '. Нийт ' + amountWords(event.total) + '.';
+      }).join(', ') + '. ' + amountSentence(event.total);
     }
   }
-  root.ShopGame = {Game, signature, parseAmount, numberWords, amountWords, amountKeys, shuffle};
+  root.ShopGame = {Game, signature, parseAmount, numberWords, amountWords, amountSentence, amountKeys, shuffle};
 })(globalThis);
