@@ -67,9 +67,11 @@
           settings: {level: 2, speed: 1, labels: false}
         };
       }
-      if (!Number.isInteger(this.state.stats.withHints)) {
-        this.state.stats.withHints = this.state.history.filter(visit => visit.hadHints || visit.events.some(event => event.hintUsed)).length;
-      }
+      this.state.history.forEach(visit => {
+        visit.hadHints = Boolean(visit.hadHints || visit.events.some(event => event.hintUsed));
+      });
+      this.state.stats.withHints = this.state.history.filter(visit => visit.hadHints).length;
+      this.state.stats.clean = this.state.history.filter(visit => !visit.hadErrors && !visit.hadHints).length;
     }
     snapshot() { return copy(this.state); }
     get active() { return this.state.active; }
@@ -197,7 +199,8 @@
       const hadHints = visit.events.some(e => e.hintUsed);
       this.state.stats.collected++;
       if (hadHints) this.state.stats.withHints++;
-      this.state.stats[hadErrors ? 'withErrors' : 'clean']++;
+      if (hadErrors) this.state.stats.withErrors++;
+      else if (!hadHints) this.state.stats.clean++;
       this.state.lastTotal = this.event.total;
       this.state.history.push({id: visit.id, basket: copy(visit.basket), events: copy(visit.events), hadErrors, hadHints, level: visit.level});
       return true;
