@@ -64,9 +64,10 @@
           remainingForeign: shuffle([...this.foreign.keys()], rng),
           lastPrices: {}, lastTotal: null, active: null, history: [],
           stats: {collected: 0, clean: 0, withErrors: 0, foreignRecognized: 0, foreignMistakes: 0, withHints: 0},
-          settings: {level: 2, speed: 1, labels: false}
+          settings: {level: 2, speed: 1, labels: false, hints: true}
         };
       }
+      if (typeof this.state.settings.hints !== 'boolean') this.state.settings.hints = true;
       this.state.history.forEach(visit => {
         visit.hadHints = Boolean(visit.hadHints || visit.events.some(event => event.hintUsed));
       });
@@ -153,7 +154,7 @@
       return true;
     }
     markHintUsed() {
-      if (this.active?.phase !== 'answering' || !this.event.heard) return false;
+      if (!this.state.settings.hints || this.active?.phase !== 'answering' || !this.event.heard) return false;
       this.event.hintUsed = true;
       return true;
     }
