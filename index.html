@@ -8,12 +8,12 @@
   <title>Миний худалдан авалт · Монгольский на слух</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="game.css?v=labels-hints-v3">
+  <link rel="stylesheet" href="game.css?v=achievements-art-v1">
   <link rel="stylesheet" href="menu.css">
   <script src="config.js" defer></script>
   <script src="content.js" defer></script>
-  <script src="engine.js?v=hint-categories-v2" defer></script>
-  <script src="app.js?v=hint-categories-v2" defer></script>
+  <script src="engine.js?v=achievements-art-v1" defer></script>
+  <script src="app.js?v=achievements-art-v1" defer></script>
 </head>
 <body class="is-loading">
   <section id="loading-screen" class="loading-screen" aria-labelledby="loading-title" aria-busy="true">
@@ -35,6 +35,7 @@
         <a class="wordmark" href="#home" id="home-link"><span class="wordmark-title" lang="mn">Миний<br>худалдан авалт</span><span>Монгольский магазин</span></a>
         <nav aria-label="Меню игры">
           <button class="icon-button" id="history-button" aria-label="Покупки и разбор ошибок" title="Покупки и ошибки"></button>
+          <button class="icon-button" id="achievements-button" data-action="achievements" aria-label="Достижения" title="Достижения"></button>
           <button class="icon-button" id="settings-button" aria-label="Настройки" title="Настройки"></button>
           <button class="icon-button" id="help-button" aria-label="Как играть" title="Как играть"></button>
           <button class="icon-button" id="fullscreen-button" aria-label="На весь экран" title="На весь экран"></button>
@@ -45,6 +46,7 @@
       <main id="game" tabindex="-1"></main>
   </div>
   <dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div></dialog>
+  <div class="achievement-toast" id="achievement-toast" role="status" hidden></div>
   <div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
   <noscript>Для игры нужно включить JavaScript в браузере.</noscript>
 </body>

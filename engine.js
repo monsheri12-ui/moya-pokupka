@@ -45,6 +45,459 @@
     return ['thousands/' + thousands + '-part', 'remainder/' + remainder];
   }
 
+  const ACHIEVEMENTS = [
+  {
+    "id": "collected_1",
+    "title": "Первый пакет",
+    "description": "Забрать 1 собственную покупку.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 1,
+    "icon": "bag"
+  },
+  {
+    "id": "collected_5",
+    "title": "Знакомый прилавок",
+    "description": "Забрать 5 собственных покупок.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 5,
+    "icon": "bag"
+  },
+  {
+    "id": "collected_10",
+    "title": "Частый гость",
+    "description": "Забрать 10 собственных покупок.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 10,
+    "icon": "bag"
+  },
+  {
+    "id": "collected_25",
+    "title": "Пакет за пакетом",
+    "description": "Забрать 25 собственных покупок.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 25,
+    "icon": "bag"
+  },
+  {
+    "id": "collected_50",
+    "title": "Свой в магазине",
+    "description": "Забрать 50 собственных покупок.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 50,
+    "icon": "star"
+  },
+  {
+    "id": "collected_100",
+    "title": "Богатая кладовая",
+    "description": "Забрать 100 собственных покупок.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 100,
+    "icon": "bag"
+  },
+  {
+    "id": "collected_200",
+    "title": "Верный покупатель",
+    "description": "Забрать 200 собственных покупок.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 200,
+    "icon": "trophy"
+  },
+  {
+    "id": "collected_300",
+    "title": "Мастер покупок",
+    "description": "Забрать 300 собственных покупок.",
+    "group": "Покупки",
+    "metric": "collected",
+    "target": 300,
+    "icon": "trophy"
+  },
+  {
+    "id": "clean_1",
+    "title": "Чистый чек",
+    "description": "Завершить 1 собственную покупку без ошибок и подсказок.",
+    "group": "Чистые покупки",
+    "metric": "clean",
+    "target": 1,
+    "icon": "check"
+  },
+  {
+    "id": "clean_5",
+    "title": "Точно в корзину",
+    "description": "Завершить 5 собственных покупок без ошибок и подсказок.",
+    "group": "Чистые покупки",
+    "metric": "clean",
+    "target": 5,
+    "icon": "check"
+  },
+  {
+    "id": "clean_10",
+    "title": "Аккуратный покупатель",
+    "description": "Завершить 10 собственных покупок без ошибок и подсказок.",
+    "group": "Чистые покупки",
+    "metric": "clean",
+    "target": 10,
+    "icon": "check"
+  },
+  {
+    "id": "clean_25",
+    "title": "Без единой помарки",
+    "description": "Завершить 25 собственных покупок без ошибок и подсказок.",
+    "group": "Чистые покупки",
+    "metric": "clean",
+    "target": 25,
+    "icon": "check"
+  },
+  {
+    "id": "clean_50",
+    "title": "Точность в пакете",
+    "description": "Завершить 50 собственных покупок без ошибок и подсказок.",
+    "group": "Чистые покупки",
+    "metric": "clean",
+    "target": 50,
+    "icon": "star"
+  },
+  {
+    "id": "clean_100",
+    "title": "Образцовый заказ",
+    "description": "Завершить 100 собственных покупок без ошибок и подсказок.",
+    "group": "Чистые покупки",
+    "metric": "clean",
+    "target": 100,
+    "icon": "trophy"
+  },
+  {
+    "id": "foreign_1",
+    "title": "Чужой пакет",
+    "description": "Правильно отклонить 1 чужой заказ.",
+    "group": "Свои и чужие",
+    "metric": "foreignRecognized",
+    "target": 1,
+    "icon": "basket"
+  },
+  {
+    "id": "foreign_5",
+    "title": "Свои покупки",
+    "description": "Правильно отклонить 5 чужих заказов.",
+    "group": "Свои и чужие",
+    "metric": "foreignRecognized",
+    "target": 5,
+    "icon": "check"
+  },
+  {
+    "id": "foreign_10",
+    "title": "Внимательные уши",
+    "description": "Правильно отклонить 10 чужих заказов.",
+    "group": "Свои и чужие",
+    "metric": "foreignRecognized",
+    "target": 10,
+    "icon": "speaker"
+  },
+  {
+    "id": "foreign_25",
+    "title": "Корзины не перепутать",
+    "description": "Правильно отклонить 25 чужих заказов.",
+    "group": "Свои и чужие",
+    "metric": "foreignRecognized",
+    "target": 25,
+    "icon": "basket"
+  },
+  {
+    "id": "foreign_50",
+    "title": "Знаток заказов",
+    "description": "Правильно отклонить 50 чужих заказов.",
+    "group": "Свои и чужие",
+    "metric": "foreignRecognized",
+    "target": 50,
+    "icon": "trophy"
+  },
+  {
+    "id": "products_5",
+    "title": "Первые находки",
+    "description": "Купить не менее 5 разных видов товаров в завершённых собственных покупках.",
+    "group": "Разные товары",
+    "metric": "uniqueProducts",
+    "target": 5,
+    "icon": "basket"
+  },
+  {
+    "id": "products_10",
+    "title": "Разноцветная корзина",
+    "description": "Купить не менее 10 разных видов товаров в завершённых собственных покупках.",
+    "group": "Разные товары",
+    "metric": "uniqueProducts",
+    "target": 10,
+    "icon": "basket"
+  },
+  {
+    "id": "products_15",
+    "title": "Знакомые полки",
+    "description": "Купить не менее 15 разных видов товаров в завершённых собственных покупках.",
+    "group": "Разные товары",
+    "metric": "uniqueProducts",
+    "target": 15,
+    "icon": "star"
+  },
+  {
+    "id": "products_20",
+    "title": "Почти весь магазин",
+    "description": "Купить не менее 20 разных видов товаров в завершённых собственных покупках.",
+    "group": "Разные товары",
+    "metric": "uniqueProducts",
+    "target": 20,
+    "icon": "star"
+  },
+  {
+    "id": "products_24",
+    "title": "Вся продуктовая полка",
+    "description": "Купить не менее 24 разных видов товаров в завершённых собственных покупках.",
+    "group": "Разные товары",
+    "metric": "uniqueProducts",
+    "target": 24,
+    "icon": "trophy"
+  },
+  {
+    "id": "units_20",
+    "title": "Запасы к столу",
+    "description": "Суммарно забрать 20 упаковок товаров в завершённых собственных покупках.",
+    "group": "Запасы",
+    "metric": "units",
+    "target": 20,
+    "icon": "bag"
+  },
+  {
+    "id": "units_50",
+    "title": "Полный буфет",
+    "description": "Суммарно забрать 50 упаковок товаров в завершённых собственных покупках.",
+    "group": "Запасы",
+    "metric": "units",
+    "target": 50,
+    "icon": "bag"
+  },
+  {
+    "id": "units_100",
+    "title": "Щедрая кладовая",
+    "description": "Суммарно забрать 100 упаковок товаров в завершённых собственных покупках.",
+    "group": "Запасы",
+    "metric": "units",
+    "target": 100,
+    "icon": "bag"
+  },
+  {
+    "id": "units_250",
+    "title": "Пакеты с запасом",
+    "description": "Суммарно забрать 250 упаковок товаров в завершённых собственных покупках.",
+    "group": "Запасы",
+    "metric": "units",
+    "target": 250,
+    "icon": "star"
+  },
+  {
+    "id": "units_500",
+    "title": "Большой погребок",
+    "description": "Суммарно забрать 500 упаковок товаров в завершённых собственных покупках.",
+    "group": "Запасы",
+    "metric": "units",
+    "target": 500,
+    "icon": "trophy"
+  },
+  {
+    "id": "basket_5",
+    "title": "Корзинка",
+    "description": "Забрать собственную корзину, в которой не менее 5 упаковок товаров.",
+    "group": "Большие корзины",
+    "metric": "maxBasketUnits",
+    "target": 5,
+    "icon": "basket"
+  },
+  {
+    "id": "basket_10",
+    "title": "Вместительная корзина",
+    "description": "Забрать собственную корзину, в которой не менее 10 упаковок товаров.",
+    "group": "Большие корзины",
+    "metric": "maxBasketUnits",
+    "target": 10,
+    "icon": "basket"
+  },
+  {
+    "id": "basket_15",
+    "title": "Большая закупка",
+    "description": "Забрать собственную корзину, в которой не менее 15 упаковок товаров.",
+    "group": "Большие корзины",
+    "metric": "maxBasketUnits",
+    "target": 15,
+    "icon": "basket"
+  },
+  {
+    "id": "basket_20",
+    "title": "Полный пакет",
+    "description": "Завершить покупку с самой вместительной корзиной.",
+    "group": "Большие корзины",
+    "metric": "maxBasketUnits",
+    "target": 20,
+    "icon": "trophy"
+  },
+  {
+    "id": "level1_1",
+    "title": "У знакомой полки",
+    "description": "Завершить 1 собственную покупку на первом уровне.",
+    "group": "Уровни",
+    "metric": "level1Count",
+    "target": 1,
+    "icon": "basket"
+  },
+  {
+    "id": "level1_10",
+    "title": "Малые покупки",
+    "description": "Завершить 10 собственных покупок на первом уровне.",
+    "group": "Уровни",
+    "metric": "level1Count",
+    "target": 10,
+    "icon": "check"
+  },
+  {
+    "id": "level2_1",
+    "title": "Новый ряд",
+    "description": "Завершить 1 собственную покупку на втором уровне.",
+    "group": "Уровни",
+    "metric": "level2Count",
+    "target": 1,
+    "icon": "basket"
+  },
+  {
+    "id": "level2_10",
+    "title": "Уверенный выбор",
+    "description": "Завершить 10 собственных покупок на втором уровне.",
+    "group": "Уровни",
+    "metric": "level2Count",
+    "target": 10,
+    "icon": "check"
+  },
+  {
+    "id": "level3_1",
+    "title": "Дальняя полка",
+    "description": "Завершить 1 собственную покупку на третьем уровне.",
+    "group": "Уровни",
+    "metric": "level3Count",
+    "target": 1,
+    "icon": "basket"
+  },
+  {
+    "id": "level3_10",
+    "title": "Широкий список",
+    "description": "Завершить 10 собственных покупок на третьем уровне.",
+    "group": "Уровни",
+    "metric": "level3Count",
+    "target": 10,
+    "icon": "star"
+  },
+  {
+    "id": "level4_1",
+    "title": "Полный прилавок",
+    "description": "Завершить 1 собственную покупку на четвёртом уровне.",
+    "group": "Уровни",
+    "metric": "level4Count",
+    "target": 1,
+    "icon": "basket"
+  },
+  {
+    "id": "level4_10",
+    "title": "Большая корзина",
+    "description": "Завершить 10 собственных покупок на четвёртом уровне.",
+    "group": "Уровни",
+    "metric": "level4Count",
+    "target": 10,
+    "icon": "trophy"
+  },
+  {
+    "id": "streak_3",
+    "title": "Ровный ряд",
+    "description": "Завершить подряд 3 собственные покупки без ошибок и подсказок.",
+    "group": "Серии",
+    "metric": "bestCleanStreak",
+    "target": 3,
+    "icon": "check"
+  },
+  {
+    "id": "streak_5",
+    "title": "Пять чистых чеков",
+    "description": "Завершить подряд 5 собственных покупок без ошибок и подсказок.",
+    "group": "Серии",
+    "metric": "bestCleanStreak",
+    "target": 5,
+    "icon": "check"
+  },
+  {
+    "id": "streak_10",
+    "title": "Нить точности",
+    "description": "Завершить подряд 10 собственных покупок без ошибок и подсказок.",
+    "group": "Серии",
+    "metric": "bestCleanStreak",
+    "target": 10,
+    "icon": "star"
+  },
+  {
+    "id": "streak_25",
+    "title": "Безупречная череда",
+    "description": "Завершить подряд 25 собственных покупок без ошибок и подсказок.",
+    "group": "Серии",
+    "metric": "bestCleanStreak",
+    "target": 25,
+    "icon": "trophy"
+  },
+  {
+    "id": "spent_100000",
+    "title": "Солидные покупки",
+    "description": "Суммарно оплатить не менее 100 000 ₮ в завершённых собственных покупках.",
+    "group": "Суммы",
+    "metric": "totalSpent",
+    "target": 100000,
+    "icon": "bag"
+  },
+  {
+    "id": "spent_500000",
+    "title": "Кошелёк путешественника",
+    "description": "Суммарно оплатить не менее 500 000 ₮ в завершённых собственных покупках.",
+    "group": "Суммы",
+    "metric": "totalSpent",
+    "target": 500000,
+    "icon": "star"
+  },
+  {
+    "id": "spent_1000000",
+    "title": "Миллион тугриков",
+    "description": "Суммарно оплатить не менее 1 000 000 ₮ в завершённых собственных покупках.",
+    "group": "Суммы",
+    "metric": "totalSpent",
+    "target": 1000000,
+    "icon": "trophy"
+  },
+  {
+    "id": "unassisted_10",
+    "title": "Самостоятельный выбор",
+    "description": "Завершить 10 собственных покупок без подсказок; ошибки допустимы.",
+    "group": "Самостоятельность",
+    "metric": "unassistedPurchases",
+    "target": 10,
+    "icon": "star"
+  },
+  {
+    "id": "cycle_2",
+    "title": "Снова в магазин",
+    "description": "Начать второй круг покупок.",
+    "group": "Новый круг",
+    "metric": "cycle",
+    "target": 2,
+    "icon": "replay"
+  }
+];
+
   class Game {
     constructor(content, saved = null, rng = Math.random) {
       this.content = content;
@@ -73,6 +526,44 @@
       });
       this.state.stats.withHints = this.state.history.filter(visit => visit.hadHints).length;
       this.state.stats.clean = this.state.history.filter(visit => !visit.hadErrors && !visit.hadHints).length;
+      this.state.achievements = [...new Set(Array.isArray(this.state.achievements) ? this.state.achievements.filter(id => typeof id === 'string') : [])];
+      this.unlockAchievements();
+    }
+    achievementMetrics() {
+      const metrics = {collected:this.state.stats.collected,clean:this.state.stats.clean,
+        foreignRecognized:this.state.stats.foreignRecognized,uniqueProducts:0,units:0,maxBasketUnits:0,
+        level1Count:0,level2Count:0,level3Count:0,level4Count:0,bestCleanStreak:0,totalSpent:0,
+        unassistedPurchases:0,cycle:this.state.cycle};
+      const products = new Set();
+      let streak = 0;
+      for (const visit of this.state.history) {
+        let units = 0;
+        for (const item of visit.basket) { products.add(item.product_id); units += item.quantity; }
+        metrics.units += units;
+        metrics.maxBasketUnits = Math.max(metrics.maxBasketUnits,units);
+        if (visit.level>=1 && visit.level<=4) metrics['level'+visit.level+'Count']++;
+        metrics.totalSpent += visit.events.find(event=>event.owner==='player')?.total || 0;
+        if (!visit.hadHints) metrics.unassistedPurchases++;
+        streak = !visit.hadErrors && !visit.hadHints ? streak+1 : 0;
+        metrics.bestCleanStreak = Math.max(metrics.bestCleanStreak,streak);
+      }
+      metrics.uniqueProducts = products.size;
+      return metrics;
+    }
+    achievementProgress() {
+      const metrics = this.achievementMetrics(), earned = new Set(this.state.achievements);
+      return ACHIEVEMENTS.map(achievement=>({...achievement,value:metrics[achievement.metric]||0,
+        progress:Math.min(achievement.target,metrics[achievement.metric]||0),unlocked:earned.has(achievement.id)}));
+    }
+    unlockAchievements() {
+      const unlocked = [];
+      for (const achievement of this.achievementProgress()) {
+        if (!achievement.unlocked && achievement.value>=achievement.target) {
+          this.state.achievements.push(achievement.id);
+          unlocked.push(achievement.id);
+        }
+      }
+      return unlocked;
     }
     snapshot() { return copy(this.state); }
     get active() { return this.state.active; }
@@ -181,6 +672,7 @@
         visit.phase = 'foreign_ack';
         this.state.stats.foreignRecognized++;
         if (event.attempts.some(a => !a.correct)) this.state.stats.foreignMistakes++;
+        this.unlockAchievements();
       } else visit.phase = 'paid';
       return {ok: true, action};
     }
@@ -204,6 +696,7 @@
       else if (!hadHints) this.state.stats.clean++;
       this.state.lastTotal = this.event.total;
       this.state.history.push({id: visit.id, basket: copy(visit.basket), events: copy(visit.events), hadErrors, hadHints, level: visit.level});
+      this.unlockAchievements();
       return true;
     }
     newRound() {
@@ -212,6 +705,7 @@
       if (!this.state.remainingForeign.length) this.state.remainingForeign = shuffle([...this.foreign.keys()], this.rng);
       this.state.cycle++;
       this.state.active = null;
+      this.unlockAchievements();
       return true;
     }
     speechKeys(event = this.event) {
@@ -224,5 +718,5 @@
       }).join(', ') + '. ' + amountSentence(event.total);
     }
   }
-  root.ShopGame = {Game, signature, parseAmount, numberWords, amountWords, amountSentence, amountKeys, shuffle};
+  root.ShopGame = {Game, achievementCatalog:ACHIEVEMENTS, signature, parseAmount, numberWords, amountWords, amountSentence, amountKeys, shuffle};
 })(globalThis);

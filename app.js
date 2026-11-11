@@ -17,7 +17,10 @@
     fullscreen:'<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>',
     check:'<path d="m5 12 4 4L19 6"/>',
     arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',
-    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    trophy:'<path d="M8 3h8v5a4 4 0 0 1-8 0V3Zm4 9v5m-4 4h8m-7-4h6v4H9v-4Z"/><path d="M8 5H4v2a4 4 0 0 0 4 4m8-6h4v2a4 4 0 0 1-4 4"/>',
+    star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/>',
+    lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>' 
   };
   const icon = name => '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + (iconPaths[name] || '') + '</svg>';
   const storageKey = 'moya-pokupka-game-v2-20';
@@ -33,6 +36,8 @@
     catch (_) { storageProblem = true; }
   };
   const announce = text => { $('#announcer').textContent = text; };
+  let achievementToastTimer = null;
+  save();
   const sprite = (id, sizeClass = '') => {
     const p = game.products.get(id), col = p.sprite_index % 6, row = Math.floor(p.sprite_index / 6);
     return '<span class="sprite '+sizeClass+'" style="background-position:'+col*20+'% '+row*100/3+'%" aria-hidden="true"></span>';
@@ -140,7 +145,7 @@
     const collected=game.active?.phase==='collected';
     const action=collected?'next':'start';
     const label=collected?'Ещё за покупками':game.active?'Продолжить покупку':'В магазин';
-    return '<section class="menu-board game-board start-menu"><div class="board-pin"></div><p class="menu-eyebrow">Монгольский на слух</p><h1 lang="mn">Миний<br>худалдан авалт</h1><div class="menu-divider" aria-hidden="true"><i></i></div><p class="lead">Загляни в корзину, послушай продавца<br>и забери свои покупки.</p><aside class="audio-notice" aria-labelledby="audio-notice-title">'+icon('speaker')+'<div><h2 id="audio-notice-title">Об озвучке</h2><p>Озвучка сгенерирована и передаёт произношение лишь приблизительно. Пожалуйста, уточняйте точное произношение у носителя монгольского языка.</p></div></aside><button class="primary full-width menu-play" data-action="'+action+'">'+icon('play')+label+'</button><div class="menu-options"><button class="secondary" data-action="settings">'+icon('settings')+' Настройки</button><button class="secondary" data-action="help">'+icon('help')+' Как играть</button></div><button class="quiet-button menu-history" data-action="history">'+icon('history')+' Покупки и ошибки</button>'+(game.active?'<p class="menu-saved">Твоя покупка сохранена</p>':'')+'</section>';
+    return '<section class="menu-board game-board start-menu"><div class="board-pin"></div><p class="menu-eyebrow">Монгольский на слух</p><h1 lang="mn">Миний<br>худалдан авалт</h1><div class="menu-divider" aria-hidden="true"><i></i></div><p class="lead">Загляни в корзину, послушай продавца<br>и забери свои покупки.</p><aside class="audio-notice" aria-labelledby="audio-notice-title">'+icon('speaker')+'<div><h2 id="audio-notice-title">Об озвучке</h2><p>Озвучка сгенерирована и передаёт произношение лишь приблизительно. Пожалуйста, уточняйте точное произношение у носителя монгольского языка.</p></div></aside><button class="primary full-width menu-play" data-action="'+action+'">'+icon('play')+label+'</button><div class="menu-options"><button class="secondary" data-action="settings">'+icon('settings')+' Настройки</button><button class="secondary" data-action="help">'+icon('help')+' Как играть</button></div><button class="quiet-button menu-history" data-action="history">'+icon('history')+' Покупки и ошибки</button><button class="quiet-button menu-achievements" data-action="achievements">'+icon('trophy')+' Достижения</button>'+(game.active?'<p class="menu-saved">Твоя покупка сохранена</p>':'')+'</section>';
   }
 
   function renderBasket() {
@@ -241,11 +246,13 @@
   }
   function answer(action) {
     if (audioState!=='idle') return;
+    const earnedBefore = new Set(game.state.achievements);
     const result = game.answer(action);
     if (result.ok) {
       stopAudio(); message=''; messageKind=''; save(); render(); focusScreen();
       announce(action==='pay'?'Оплата прошла. Можно забрать покупки.':'Верно: это чужая покупка. Дальше твой заказ.');
       if (action==='pay') audio.play(['thanks'],game.state.settings.speed).catch(()=>{});
+      notifyAchievements(earnedBefore);
     } else {
       message = result.mistake==='rejected_own' ? 'Это твоя покупка. Послушай ещё раз и отметь свои товары.' : result.mistake==='paid_foreign' ? 'Сейчас прозвучала чужая покупка. Твой заказ ещё впереди.' : {listen_first:'Сначала послушай заказ целиком.',incomplete:'Отметь товары и введи сумму цифрами.',incorrect:'Пока не совпало. Проверь товары, количество и сумму.'}[result.reason] || 'Попробуй ещё раз.';
       messageKind = result.reason==='incomplete'||result.reason==='listen_first'?'':'error';
@@ -256,7 +263,9 @@
   function openModal(type, content, title) {
     stopAudio(); render(); lastModalFocus = document.activeElement; modalType = type;
     $('#modal-content').innerHTML = '<div class="modal-heading"><h2 id="modal-title">'+title+'</h2><button class="icon-button" data-modal="close" aria-label="Закрыть">'+icon('close')+'</button></div>'+content;
+    $('#modal').scrollTop=0;
     if (!$('#modal').open) $('#modal').showModal();
+    else $('#modal-content .modal-heading button').focus({preventScroll:true});
   }
   function showHelp() {
     openModal('help','<div class="modal-copy"><ol><li><strong>Посмотри свою корзину.</strong> Запомни товары и количество упаковок.</li><li><strong>Послушай продавца.</strong> Он перечислит товары и сумму по-монгольски. Запись можно повторять. Если не удалось разобрать слова, открой «Подсказку»: там есть текст продавца и перевод. Подсказки можно выключить в настройках.</li><li><strong>Отметь всё услышанное.</strong> На уровне с количеством выбери число упаковок. Введи общую сумму цифрами.</li><li><strong>Оплати и забери пакет.</strong> Покупка завершится только после верного ответа и нажатия «Забрать покупки».</li></ol><div class="hint-box"><strong>Услышал другой набор?</strong><br>Нажми «Это не моя покупка». Твоя корзина сохранится, и продавец перейдёт к твоему заказу.</div><p>Корзины идут без повторов до конца набора. При новой покупке цены меняются, а при повторном прослушивании остаются прежними.</p><p>Прогресс сохраняется в этом браузере. В «Покупках и ошибках» можно снова прослушать завершённые заказы и посмотреть разбор.</p></div>','Как играть');
@@ -293,7 +302,50 @@
   function historyHtml(onlyErrors=false) {
     const stats = game.state.stats, history = game.state.history;
     const visible = history.map((r,i)=>({r,i})).reverse().filter(({r})=>!onlyErrors||r.hadErrors);
-    return '<div class="review-summary"><div><b>'+stats.collected+'</b><span>забрано покупок</span></div><div><b>'+stats.clean+'</b><span>без ошибок</span></div><div><b>'+stats.foreignRecognized+'</b><span>чужих распознано</span></div><div><b>'+stats.withHints+'</b><span>с подсказкой</span></div></div><p class="stats-note">«Без ошибок» — покупки без ошибок и подсказок.</p><label class="review-filter"><input type="checkbox" id="only-errors" '+(onlyErrors?'checked':'')+'> Только покупки с ошибками</label>'+(visible.length?'<div class="history-list">'+visible.map(({r,i})=>'<details class="history-entry"><summary>Покупка №'+(i+1)+'<span class="history-status '+(r.hadErrors?'errors':'')+'">'+(r.hadErrors?'с исправлениями':r.hadHints?'с подсказкой':'без ошибок')+(r.hadErrors&&r.hadHints?' · с подсказкой':'')+'</span></summary><div class="history-detail">'+r.events.map((e,j)=>reviewEvent(e,r.basket,i,j)).join('')+'</div></details>').join('')+'</div>':'<div class="empty-state">'+icon('history')+(onlyErrors?'Здесь нет покупок с ошибками.':'Здесь появятся твои завершённые покупки.')+'</div>');
+    return achievementEntry()+'<div class="review-summary"><div><b>'+stats.collected+'</b><span>забрано покупок</span></div><div><b>'+stats.clean+'</b><span>без ошибок</span></div><div><b>'+stats.foreignRecognized+'</b><span>чужих распознано</span></div><div><b>'+stats.withHints+'</b><span>с подсказкой</span></div></div><p class="stats-note">«Без ошибок» — покупки без ошибок и подсказок.</p><label class="review-filter"><input type="checkbox" id="only-errors" '+(onlyErrors?'checked':'')+'> Только покупки с ошибками</label>'+(visible.length?'<div class="history-list">'+visible.map(({r,i})=>'<details class="history-entry"><summary>Покупка №'+(i+1)+'<span class="history-status '+(r.hadErrors?'errors':'')+'">'+(r.hadErrors?'с исправлениями':r.hadHints?'с подсказкой':'без ошибок')+(r.hadErrors&&r.hadHints?' · с подсказкой':'')+'</span></summary><div class="history-detail">'+r.events.map((e,j)=>reviewEvent(e,r.basket,i,j)).join('')+'</div></details>').join('')+'</div>':'<div class="empty-state">'+icon('history')+(onlyErrors?'Здесь нет покупок с ошибками.':'Здесь появятся твои завершённые покупки.')+'</div>');
+  }
+  let achievementFilter='all';
+  function achievementArt(id,extra='') {
+    const index=ShopGame.achievementCatalog.findIndex(item=>item.id===id);
+    const tile=index%25,sheet=index<25?'a':'b';
+    return '<span class="achievement-art atlas-'+sheet+' '+extra+'" style="background-position:'+(tile%5)*25+'% '+Math.floor(tile/5)*25+'%" aria-hidden="true"></span>';
+  }
+  function achievementEntry() {
+    const earned = game.achievementProgress().filter(item=>item.unlocked).length;
+    return '<button class="achievement-entry" data-action="achievements">'+icon('trophy')+'<span><strong>Достижения</strong><small>'+earned+' из 50 открыто</small></span>'+icon('arrow')+'</button>';
+  }
+  function achievementsHtml(filter='all') {
+    const all = game.achievementProgress(), earned=all.filter(item=>item.unlocked).length;
+    const visible=all.filter(item=>filter==='earned'?item.unlocked:filter==='locked'?!item.unlocked:true);
+    const filters=[['all','Все'],['earned','Получены'],['locked','Впереди']].map(([value,label])=>'<button class="achievement-filter '+(filter===value?'active':'')+'" data-modal="achievement-filter" data-filter="'+value+'" aria-pressed="'+(filter===value)+'">'+label+'</button>').join('');
+    const cards=visible.map(item=>{
+      const progress=item.unlocked?item.target:item.progress;
+      const count=item.metric==='maxBasketUnits'?(item.unlocked?'Цель достигнута':'Собери вместительную корзину'):money(progress)+' / '+money(item.target);
+      return '<article class="achievement-card '+(item.unlocked?'is-unlocked':'is-locked')+'"><button type="button" class="achievement-medal" data-modal="achievement-detail" data-achievement="'+esc(item.id)+'" aria-label="Рассмотреть достижение: '+esc(item.title)+'">'+achievementArt(item.id)+'<span class="achievement-seal" aria-hidden="true">'+icon(item.unlocked?'check':'lock')+'</span></button><div class="achievement-copy"><p class="achievement-group">'+esc(item.group)+'</p><h3>'+esc(item.title)+'</h3><p class="achievement-description">'+esc(item.description)+'</p><div class="achievement-progress"><span>'+esc(count)+'</span><strong>'+(item.unlocked?'Получено':'Впереди')+'</strong></div><progress value="'+progress+'" max="'+item.target+'" aria-label="Прогресс: '+esc(item.title)+'"></progress></div></article>';
+    }).join('');
+    return '<section class="achievements-content"><div class="achievements-intro"><span class="achievements-emblem" aria-hidden="true">'+icon('trophy')+'</span><div><h3>'+earned+' из 50</h3><p>Значки за твои покупки и внимательное слушание.</p></div></div><p class="achievement-guidance">Каждый значок открывается один раз. Награды за точность требуют ответов без ошибок и подсказок.</p><div class="achievement-filters" aria-label="Фильтр достижений">'+filters+'</div><div class="achievements-grid">'+(cards||'<p class="achievement-empty">'+(filter==='earned'?'Здесь появятся твои первые значки. Забери покупку, чтобы начать коллекцию.':'Все значки уже в твоей коллекции!')+'</p>')+'</div></section>';
+  }
+  function showAchievements(filter='all') {
+    achievementFilter=filter;
+    clearTimeout(achievementToastTimer);
+    $('#achievement-toast').hidden=true;
+    openModal('achievements',achievementsHtml(filter),'Достижения');
+  }
+  function showAchievementDetail(id) {
+    const item=game.achievementProgress().find(achievement=>achievement.id===id);
+    if(!item)return;
+    const count=item.metric==='maxBasketUnits'?(item.unlocked?'Цель достигнута':'Собери вместительную корзину'):money(item.unlocked?item.target:item.progress)+' / '+money(item.target);
+    openModal('achievement-detail','<section class="achievement-detail">'+achievementArt(item.id,'achievement-art-large')+'<p class="achievement-detail-state">'+(item.unlocked?'Уже в твоей коллекции':'Пока впереди')+'</p><h3>'+esc(item.title)+'</h3><p class="achievement-detail-description">'+esc(item.description)+'</p><p class="achievement-detail-count">'+esc(count)+'</p><button class="primary full-width" data-modal="back-achievements">Вернуться к коллекции</button></section>','Достижение');
+  }
+  function notifyAchievements(before) {
+    const fresh=game.achievementProgress().filter(item=>item.unlocked&&!before.has(item.id));
+    if(!fresh.length)return;
+    const toast=$('#achievement-toast');
+    const label=fresh.length===1?fresh[0].title:fresh[0].title+' и ещё '+(fresh.length-1);
+    toast.innerHTML='<span class="achievement-toast-illustration">'+achievementArt(fresh[0].id)+'</span><div><strong>'+(fresh.length===1?'Новое достижение':'Новые достижения')+'</strong><p>'+esc(label)+'</p></div><button data-action="achievements" class="achievement-toast-view">Посмотреть</button><button data-action="achievement-dismiss" class="achievement-toast-close" aria-label="Закрыть уведомление">'+icon('close')+'</button>';
+    toast.hidden=false;
+    clearTimeout(achievementToastTimer);
+    achievementToastTimer=setTimeout(()=>{toast.hidden=true;},8000);
   }
   function showHistory() { openModal('history',historyHtml(),'Покупки и ошибки'); }
   function closeModal() {
@@ -317,10 +369,12 @@
     if (action==='peek') showPeek();
     if (action==='hint') showHint();
     if (action==='continue-foreign') { game.continueAfterForeign();save();render();focusScreen();playOrder(); }
-    if (action==='collect') { stopAudio();if(game.collect()){save();render();focusScreen();announce('Покупки у тебя.');} }
+    if (action==='collect') { const earnedBefore=new Set(game.state.achievements);stopAudio();if(game.collect()){save();render();focusScreen();announce('Покупки у тебя.');notifyAchievements(earnedBefore);} }
     if (action==='next') startVisit();
-    if (action==='new-round'&&game.newRound()) { exhausted=null;save();startVisit(); }
+    if (action==='new-round') { const earnedBefore=new Set(game.state.achievements);if(game.newRound()){exhausted=null;save();startVisit();notifyAchievements(earnedBefore);} }
     if (action==='history') showHistory();
+    if (action==='achievements') showAchievements();
+    if (action==='achievement-dismiss') { clearTimeout(achievementToastTimer);$('#achievement-toast').hidden=true; }
     if (action==='settings') showSettings();
     if (action==='help') showHelp();
     if (action==='boot-retry') loadGameAssets();
@@ -347,6 +401,14 @@
     if(event.target===$('#modal')) { const r=$('#modal').getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeModal();return; }
     const button=event.target.closest('[data-modal]');if(!button)return;
     if(button.dataset.modal==='close')closeModal();
+    if(button.dataset.modal==='achievement-detail'&&modalType==='achievements')showAchievementDetail(button.dataset.achievement);
+    if(button.dataset.modal==='back-achievements')showAchievements(achievementFilter);
+    if(button.dataset.modal==='achievement-filter'&&modalType==='achievements'){
+      const filter=['all','earned','locked'].includes(button.dataset.filter)?button.dataset.filter:'all';
+      achievementFilter=filter;
+      $('#modal-content').innerHTML='<div class="modal-heading"><h2 id="modal-title">Достижения</h2><button class="icon-button" data-modal="close" aria-label="Закрыть">'+icon('close')+'</button></div>'+achievementsHtml(filter);
+      $('#modal-content').querySelector('[data-filter="'+filter+'"]').focus({preventScroll:true});
+    }
     if(button.dataset.modal==='review-play'){
       const e=game.state.history[Number(button.dataset.history)]?.events[Number(button.dataset.event)];
       if(!e)return;
@@ -357,6 +419,7 @@
   });
   $('#modal').addEventListener('cancel',event=>{event.preventDefault();closeModal();});
   $('#home-link').addEventListener('click',event=>{event.preventDefault();stopAudio();home=true;render();});
+  $('#achievements-button').innerHTML=icon('trophy');
   $('#history-button').innerHTML=icon('history');$('#history-button').addEventListener('click',showHistory);
   $('#settings-button').innerHTML=icon('settings');$('#settings-button').addEventListener('click',showSettings);
   $('#help-button').innerHTML=icon('help');$('#help-button').addEventListener('click',showHelp);

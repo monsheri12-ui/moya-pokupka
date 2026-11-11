@@ -1,0 +1,262 @@
+{
+  "version": "achievement-art-v1",
+  "columns": 5,
+  "rows": 5,
+  "perSheet": 25,
+  "sheets": [
+    "assets/achievements/characters-a-v1.png",
+    "assets/achievements/characters-b-v1.png"
+  ],
+  "frames": {
+    "collected_1": {
+      "sheet": 0,
+      "column": 0,
+      "row": 0
+    },
+    "collected_5": {
+      "sheet": 0,
+      "column": 1,
+      "row": 0
+    },
+    "collected_10": {
+      "sheet": 0,
+      "column": 2,
+      "row": 0
+    },
+    "collected_25": {
+      "sheet": 0,
+      "column": 3,
+      "row": 0
+    },
+    "collected_50": {
+      "sheet": 0,
+      "column": 4,
+      "row": 0
+    },
+    "collected_100": {
+      "sheet": 0,
+      "column": 0,
+      "row": 1
+    },
+    "collected_200": {
+      "sheet": 0,
+      "column": 1,
+      "row": 1
+    },
+    "collected_300": {
+      "sheet": 0,
+      "column": 2,
+      "row": 1
+    },
+    "clean_1": {
+      "sheet": 0,
+      "column": 3,
+      "row": 1
+    },
+    "clean_5": {
+      "sheet": 0,
+      "column": 4,
+      "row": 1
+    },
+    "clean_10": {
+      "sheet": 0,
+      "column": 0,
+      "row": 2
+    },
+    "clean_25": {
+      "sheet": 0,
+      "column": 1,
+      "row": 2
+    },
+    "clean_50": {
+      "sheet": 0,
+      "column": 2,
+      "row": 2
+    },
+    "clean_100": {
+      "sheet": 0,
+      "column": 3,
+      "row": 2
+    },
+    "foreign_1": {
+      "sheet": 0,
+      "column": 4,
+      "row": 2
+    },
+    "foreign_5": {
+      "sheet": 0,
+      "column": 0,
+      "row": 3
+    },
+    "foreign_10": {
+      "sheet": 0,
+      "column": 1,
+      "row": 3
+    },
+    "foreign_25": {
+      "sheet": 0,
+      "column": 2,
+      "row": 3
+    },
+    "foreign_50": {
+      "sheet": 0,
+      "column": 3,
+      "row": 3
+    },
+    "products_5": {
+      "sheet": 0,
+      "column": 4,
+      "row": 3
+    },
+    "products_10": {
+      "sheet": 0,
+      "column": 0,
+      "row": 4
+    },
+    "products_15": {
+      "sheet": 0,
+      "column": 1,
+      "row": 4
+    },
+    "products_20": {
+      "sheet": 0,
+      "column": 2,
+      "row": 4
+    },
+    "products_24": {
+      "sheet": 0,
+      "column": 3,
+      "row": 4
+    },
+    "units_20": {
+      "sheet": 0,
+      "column": 4,
+      "row": 4
+    },
+    "units_50": {
+      "sheet": 1,
+      "column": 0,
+      "row": 0
+    },
+    "units_100": {
+      "sheet": 1,
+      "column": 1,
+      "row": 0
+    },
+    "units_250": {
+      "sheet": 1,
+      "column": 2,
+      "row": 0
+    },
+    "units_500": {
+      "sheet": 1,
+      "column": 3,
+      "row": 0
+    },
+    "basket_5": {
+      "sheet": 1,
+      "column": 4,
+      "row": 0
+    },
+    "basket_10": {
+      "sheet": 1,
+      "column": 0,
+      "row": 1
+    },
+    "basket_15": {
+      "sheet": 1,
+      "column": 1,
+      "row": 1
+    },
+    "basket_20": {
+      "sheet": 1,
+      "column": 2,
+      "row": 1
+    },
+    "level1_1": {
+      "sheet": 1,
+      "column": 3,
+      "row": 1
+    },
+    "level1_10": {
+      "sheet": 1,
+      "column": 4,
+      "row": 1
+    },
+    "level2_1": {
+      "sheet": 1,
+      "column": 0,
+      "row": 2
+    },
+    "level2_10": {
+      "sheet": 1,
+      "column": 1,
+      "row": 2
+    },
+    "level3_1": {
+      "sheet": 1,
+      "column": 2,
+      "row": 2
+    },
+    "level3_10": {
+      "sheet": 1,
+      "column": 3,
+      "row": 2
+    },
+    "level4_1": {
+      "sheet": 1,
+      "column": 4,
+      "row": 2
+    },
+    "level4_10": {
+      "sheet": 1,
+      "column": 0,
+      "row": 3
+    },
+    "streak_3": {
+      "sheet": 1,
+      "column": 1,
+      "row": 3
+    },
+    "streak_5": {
+      "sheet": 1,
+      "column": 2,
+      "row": 3
+    },
+    "streak_10": {
+      "sheet": 1,
+      "column": 3,
+      "row": 3
+    },
+    "streak_25": {
+      "sheet": 1,
+      "column": 4,
+      "row": 3
+    },
+    "spent_100000": {
+      "sheet": 1,
+      "column": 0,
+      "row": 4
+    },
+    "spent_500000": {
+      "sheet": 1,
+      "column": 1,
+      "row": 4
+    },
+    "spent_1000000": {
+      "sheet": 1,
+      "column": 2,
+      "row": 4
+    },
+    "unassisted_10": {
+      "sheet": 1,
+      "column": 3,
+      "row": 4
+    },
+    "cycle_2": {
+      "sheet": 1,
+      "column": 4,
+      "row": 4
+    }
+  }
+}
