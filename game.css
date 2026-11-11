@@ -17,3 +17,67 @@ html,body{min-height:100%;background:#6d492b}body{overflow-x:hidden}.game-shell{
 @media(max-width:580px){.game-shell,#game{min-height:1070px}.shop-scene{background-size:auto 530px;background-position:25% top}.game-hud{left:12px;right:12px;top:12px}.wordmark{font-size:24px;padding:9px 14px;border-radius:12px}.wordmark span{font-size:6px;margin-top:5px;letter-spacing:.14em}.game-hud nav{gap:3px}.game-hud .icon-button{width:30px;height:31px}.game-hud .icon-button .icon{width:14px;height:14px}#fullscreen-button{display:none}.npc-speech{top:125px;right:14px;width:185px;padding:12px 10px 8px;border-width:2px;border-radius:20px 20px 20px 5px}.npc-speech:before{border-width:2px}.npc-speech h2{font-size:20px;margin-bottom:10px}.listen-button{min-width:128px;min-height:38px;font-size:12px;padding:8px 10px}.listen-button .icon{width:15px;height:15px}.npc-speech .waveform{height:13px;margin-top:9px}.npc-speech .waveform i{width:2px}.npc-speech .replay-button{font-size:9px;padding:3px 5px;min-height:23px}.npc-speech .feedback{font-size:9px;min-height:13px;margin-top:2px}.goods-tray{top:333px;left:11px;right:11px;padding:12px 9px 10px;border-width:5px;border-radius:20px}.goods-tray h2{font-size:22px;margin-bottom:12px}.goods-tray .products-grid,.goods-tray .products-grid.many{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-height:440px}.goods-tray .product-tile{aspect-ratio:1.02;border-width:1.5px;border-radius:11px}.goods-tray .quantity-control{min-width:55px;bottom:2px;height:18px;font-size:9px;gap:3px}.goods-tray .quantity-control button{font-size:14px;width:17px}.goods-tray .tick{left:4px;top:4px;width:12px;height:12px;font-size:8px;border-radius:4px}.goods-tray .sprite,.goods-tray .products-grid.many .sprite{width:82%}.goods-tray .product-name{font-size:7px;line-height:1.2}.goods-tray .with-labels .sprite{width:70%}.counter-surface{height:210px;border-top-width:7px}.counter-controls{height:210px}.cash-terminal{left:auto;right:12px;bottom:70px;width:calc(100% - 24px);max-width:none;border-width:4px;border-radius:19px;padding:10px 12px;gap:9px;transform:rotate(-1deg)}.terminal-screen{min-height:63px;border-width:3px;padding:5px 9px}.terminal-screen label{font-size:8px}.terminal-input{margin-top:5px}.terminal-input input{font-size:29px}.terminal-input>span{font-size:23px}.terminal-pay{width:91px;border-radius:10px;font-size:12px}.terminal-pay .icon{width:23px;height:23px}.basket-crate{left:15px;bottom:13px;padding:8px 12px;font-size:16px;border-width:3px;border-radius:13px;gap:7px}.basket-crate>.icon{width:25px;height:25px}.basket-crate small{display:none}.answer-bubble{left:auto;right:14px;bottom:14px;padding:10px 12px;font-size:14px;border-width:2px;border-radius:18px 18px 4px 18px;max-width:48%;line-height:1.1}.game-board{top:330px;left:13px;right:13px;border-width:5px;border-radius:20px;padding:24px 20px}.menu-board{top:365px}.game-board h1{font-size:31px}.game-board h2{font-size:29px}.game-board .lead{font-size:12px}.game-menu-hint{font-size:11px}.basket-preview{top:320px;padding:21px 13px;max-height:700px}.basket-preview .basket-card{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-height:490px}.basket-preview .basket-item{padding:5px 3px;gap:1px;border-width:1px}.basket-preview .basket-item .sprite{width:55px;max-width:95%}.basket-preview .basket-item-text{font-size:9px;line-height:1.3}.basket-preview .basket-item-quantity{font-size:8px}.basket-preview .screen-description{font-size:11px}.result-board{top:330px;max-height:690px}.result-board .receipt{max-height:350px;padding:10px 11px}.result-board .receipt-row{font-size:10px}.receipt-total{font-size:12px}.receipt-total strong{font-size:20px}.game-board .primary{font-size:13px}.game-board .quiet-button{font-size:11px}.collected-screen{top:350px}.collected-screen .bag-illustration{transform:scale(.85);margin-top:0;margin-bottom:14px}.storage-notice{top:95px;left:14px;width:170px;font-size:8px}}
 @media(max-width:360px){.wordmark{font-size:21px;padding:9px 11px}.game-hud .icon-button{width:27px;height:29px}.game-hud nav{gap:2px}.npc-speech{width:169px;right:11px;top:130px}.npc-speech h2{font-size:19px}.goods-tray h2{font-size:20px}.goods-tray .products-grid{gap:6px}.basket-crate{font-size:14px;left:13px;padding:8px 9px}.answer-bubble{font-size:12px;padding:11px 10px;right:12px}}
 @media(prefers-reduced-motion:reduce){.menu-board,.result-board,.bag-illustration,.speaking-light,.waveform i{animation:none!important}}
+
+/* Readable product labels keep their own space beneath the illustration. */
+.goods-tray .products-grid.with-labels{grid-template-columns:repeat(auto-fit,minmax(min(108px,100%),1fr))}
+.goods-tray .with-labels .product-tile{aspect-ratio:auto;display:flex;flex-direction:column;min-height:164px}
+.goods-tray .with-labels .product-toggle,.goods-tray .products-grid.many.with-labels .product-toggle{height:auto;min-height:0;flex:1;flex-direction:column;justify-content:flex-start;gap:5px;padding:10px 6px 7px}
+.goods-tray .with-labels .sprite,.goods-tray .products-grid.many.with-labels .sprite{width:82%;max-width:82px}
+.goods-tray .with-labels .product-name,.goods-tray .with-labels .selected .product-name{position:static;display:flex;align-items:center;justify-content:center;width:100%;min-height:2.5em;padding:0 2px;font-size:18px;font-weight:600;line-height:1.25;color:#4b3825;overflow-wrap:anywhere}
+.goods-tray .with-labels .quantity-control{position:static;align-self:center;transform:none;flex-shrink:0;min-width:80px;height:28px;margin:0 3px 7px;font-size:14px;gap:7px}
+.goods-tray .with-labels .quantity-control button{width:24px;height:24px;font-size:18px}
+.basket-card .basket-item-text>span[lang="mn"]{font-size:16px;font-weight:600;line-height:1.4;color:#4b3825}
+.speech-help-actions{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:3px}
+.npc-speech .speech-help-actions .replay-button,.npc-speech .hint-button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:32px;padding:5px 6px;border:0;border-radius:8px;background:transparent;color:#765635;font-size:12px;font-weight:600;line-height:1.2;white-space:nowrap}
+.npc-speech .hint-button:hover:not(:disabled){background:#eee1c5}
+.npc-speech .hint-button .icon{width:16px;height:16px;flex-shrink:0}
+.hint-transcript{font-size:20px;font-weight:500;line-height:1.65;padding:15px 16px;margin:15px 0;color:#315346}
+.hint-translation{border:1px solid #cbb184;border-radius:12px;background:#fff8e5;margin:15px 0;overflow:hidden}
+.hint-translation>summary{padding:13px 15px;cursor:pointer;font-size:15px;font-weight:650;color:#684925}
+.hint-goods{list-style:none;margin:0;padding:0 15px 6px;display:grid;gap:8px;font-size:16px}
+.hint-goods li{display:flex;justify-content:space-between;gap:16px}
+.hint-goods strong{white-space:nowrap}
+.hint-total{margin:0 15px 15px;padding-top:10px;border-top:1px solid #dfcba6;font-size:16px}
+.hint-note{margin:15px 0 20px;color:#806746;font-size:13px;line-height:1.6}
+@media(max-width:580px){
+  .goods-tray .products-grid.with-labels{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .goods-tray .with-labels .product-tile{min-height:151px}
+  .goods-tray .with-labels .product-toggle,.goods-tray .products-grid.many.with-labels .product-toggle{padding:8px 4px 6px}
+  .goods-tray .with-labels .sprite,.goods-tray .products-grid.many.with-labels .sprite{max-width:68px}
+  .goods-tray .with-labels .product-name,.goods-tray .with-labels .selected .product-name{font-size:16px}
+  .goods-tray .with-labels .quantity-control{min-width:72px;gap:4px}
+  .npc-speech .speech-help-actions{gap:3px}
+  .npc-speech .speech-help-actions .replay-button,.npc-speech .hint-button{font-size:11px;padding:5px 3px;gap:3px}
+  .npc-speech .hint-button .icon{width:14px;height:14px}
+  .hint-transcript{font-size:18px;padding:12px}
+}
+/* On narrow screens the whole checkout scrolls together, without cut-off rows. */
+@media(max-width:900px){
+  body[data-phase="answering"] .game-shell{height:auto;min-height:100svh}
+  body[data-phase="answering"] #game{height:auto;min-height:100svh;display:flex;flex-direction:column;padding:345px 0 0}
+  body[data-phase="answering"] #answer-form{display:flex;flex:1;flex-direction:column;gap:18px;min-width:0}
+  body[data-phase="answering"] .goods-tray{position:relative;top:auto;bottom:auto;left:auto;right:auto;width:auto;flex-shrink:0;margin:0 18px}
+  body[data-phase="answering"] .goods-tray .products-grid{max-height:none;overflow:visible}
+  body[data-phase="answering"] .counter-controls{position:relative;left:auto;right:auto;bottom:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;height:auto;min-height:218px;margin-top:auto;padding:18px 18px 20px;align-items:stretch}
+  body[data-phase="answering"] .cash-terminal{position:relative;grid-column:1/-1;grid-row:1;justify-self:center;top:auto;left:auto;right:auto;bottom:auto;width:100%;max-width:520px;transform:none;margin:0}
+  body[data-phase="answering"] .basket-crate,body[data-phase="answering"] .answer-bubble{position:static;align-self:stretch;display:flex;align-items:center;justify-content:center;width:100%;max-width:none;min-height:56px;margin:0;padding:10px 9px;transform:none;border-width:2px;border-radius:13px;font-size:16px;line-height:1.25;text-align:center;white-space:normal}
+  body[data-phase="answering"] .basket-crate{grid-row:2;grid-column:1;gap:7px}
+  body[data-phase="answering"] .basket-crate>.icon{width:23px;height:23px;flex-shrink:0}
+  body[data-phase="answering"] .basket-crate small{display:none}
+  body[data-phase="answering"] .answer-bubble{grid-row:2;grid-column:2}
+  body[data-phase="answering"] .answer-bubble:hover:not(:disabled){transform:none}
+  body[data-phase="answering"] .terminal-screen label{font-size:11px;letter-spacing:.025em}
+  body[data-phase="answering"] .terminal-pay{font-size:14px}
+  body[data-phase="answering"] .counter-surface{height:238px}
+}
+@media(max-width:580px){
+  body[data-phase="answering"] #game{padding-top:333px}
+  body[data-phase="answering"] .goods-tray{margin:0 11px}
+  body[data-phase="answering"] .counter-controls{padding:18px 12px 20px}
+  body[data-phase="answering"] .answer-bubble{font-size:15px}
+}
+
+.review-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.stats-note{margin:0 0 16px;font-size:12px;line-height:1.5;color:#806746}
+.review-hint{margin:8px 0;color:#80602b;font-size:13px;font-weight:600}
+@media(max-width:580px){.review-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.history-entry>summary{align-items:flex-start}.history-status{max-width:55%;text-align:right;line-height:1.4}}

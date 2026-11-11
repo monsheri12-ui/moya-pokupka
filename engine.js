@@ -63,9 +63,12 @@
           remainingOwn: shuffle([...this.own.keys()], rng),
           remainingForeign: shuffle([...this.foreign.keys()], rng),
           lastPrices: {}, lastTotal: null, active: null, history: [],
-          stats: {collected: 0, clean: 0, withErrors: 0, foreignRecognized: 0, foreignMistakes: 0},
+          stats: {collected: 0, clean: 0, withErrors: 0, foreignRecognized: 0, foreignMistakes: 0, withHints: 0},
           settings: {level: 2, speed: 1, labels: false}
         };
+      }
+      if (!Number.isInteger(this.state.stats.withHints)) {
+        this.state.stats.withHints = this.state.history.filter(visit => visit.hadHints || visit.events.some(event => event.hintUsed)).length;
       }
     }
     snapshot() { return copy(this.state); }
@@ -111,7 +114,7 @@
         });
         events = [foreignTemplate, ownTemplate].filter(Boolean).map(template => {
           const items = template.items.map(i => ({...i, unit_price: prices[i.product_id], line_total: prices[i.product_id] * i.quantity}));
-          return {id: template.id, owner: template.owner, items, total: items.reduce((sum, i) => sum + i.line_total, 0), heard: false, replays: 0, attempts: [], resolved: false};
+          return {id: template.id, owner: template.owner, items, total: items.reduce((sum, i) => sum + i.line_total, 0), heard: false, replays: 0, attempts: [], resolved: false, hintUsed: false};
         });
         if (events[0].total !== this.state.lastTotal && (events.length === 1 || events[0].total !== events[1].total)) break;
         events = null;
@@ -145,6 +148,11 @@
       if (this.active?.phase !== 'answering' || this.event.id !== eventId) return false;
       if (this.event.heard) this.event.replays++;
       this.event.heard = true;
+      return true;
+    }
+    markHintUsed() {
+      if (this.active?.phase !== 'answering' || !this.event.heard) return false;
+      this.event.hintUsed = true;
       return true;
     }
     select(id, qty) {
@@ -186,10 +194,12 @@
       if (!visit || visit.phase !== 'paid') return false;
       visit.phase = 'collected';
       const hadErrors = visit.events.some(e => e.attempts.some(a => !a.correct));
+      const hadHints = visit.events.some(e => e.hintUsed);
       this.state.stats.collected++;
+      if (hadHints) this.state.stats.withHints++;
       this.state.stats[hadErrors ? 'withErrors' : 'clean']++;
       this.state.lastTotal = this.event.total;
-      this.state.history.push({id: visit.id, basket: copy(visit.basket), events: copy(visit.events), hadErrors, level: visit.level});
+      this.state.history.push({id: visit.id, basket: copy(visit.basket), events: copy(visit.events), hadErrors, hadHints, level: visit.level});
       return true;
     }
     newRound() {
